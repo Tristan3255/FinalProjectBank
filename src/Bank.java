@@ -8,6 +8,14 @@ public class Bank {
         this.balance = balance;
     }
 
+    public Person getUser() {
+        return user;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
     public void withdraw(double currency){
         balance = balance - currency;
     }
