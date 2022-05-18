@@ -1,21 +1,28 @@
+import java.sql.Array;
+import java.util.ArrayList;
 import java.util.Scanner;
+import java.io.File;
+import java.io.FileNotFoundException;
 public class Logic {
 
 
     public Logic() {
     }
 
+    ArrayList<Bank> UserInformation = new ArrayList<Bank>();
+    Scanner input = new Scanner(System.in);
     Save s = new Save();
 
-    Scanner input = new Scanner(System.in);
-
     public void simulate() {
+        Load();
+
         String choice = "";
         System.out.println("Welcome to the International Bank");
         System.out.println("Would you like to create a bank account? Y/N");
         choice = input.nextLine();
         if (choice.contains("y") || choice.contains("Y")) {
             createAccount();
+            s.Save(UserInformation);
         } else {
             System.out.print("Would you like to log in?");
         }
@@ -33,7 +40,23 @@ public class Logic {
         }
     }
 
+    public void Load() throws FileNotFoundException{
+        try{
+            String name = "";
+            int age = 0;
 
+
+            File myFile = new File("src/person.data");
+            Scanner myReader = new Scanner(myFile);
+            while(myReader.hasNextLine()){
+                String info = 
+            }
+        }
+        catch(FileNotFoundException e){
+            System.out.println("error");
+            e.printStackTrace();
+        }
+    }
     public void createAccount() {
         //Asking for user credentials;
         boolean validAge = false;
@@ -81,13 +104,11 @@ public class Logic {
                             System.out.println("Your attempted pin number contains letters, please try again.");
                         }
                     }
-                    s.Save(userBankAcc);
+                    UserInformation.add(userBankAcc);
                 }
-
             }
-
         }
 
-        ;
+
     }
 }
