@@ -1,16 +1,16 @@
-public class Bank {
+public class BankInformation {
 
     private double balance;
-    private Person user;
+    private PersonInfo user;
     private int pin;
 
-    public Bank(Person person, int pin, double balance){
+    public BankInformation(PersonInfo person, int pin, double balance){
         user = person;
         this.balance = balance;
         this.pin = pin;
     }
 
-    public Person getUser() {
+    public PersonInfo getUser() {
         return user;
     }
 
@@ -20,6 +20,13 @@ public class Bank {
 
     public int getPin(){
         return pin;
+    }
+
+    public void listInfo(){
+        System.out.println("Name: " + user.getName());
+        System.out.println("Age: " + user.getAge());
+        System.out.println("Balance: " + balance);
+        System.out.println("Pin " + pin);
     }
 
     public void withdraw(double currency){

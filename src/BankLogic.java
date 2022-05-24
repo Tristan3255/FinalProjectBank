@@ -1,18 +1,21 @@
 import java.util.ArrayList;
 import java.util.Scanner;
-public class Logic {
+public class BankLogic {
 
-    public Logic(){
+    public BankLogic(){
     }
 
-    private ArrayList<Bank> UserInformation = new ArrayList<>();
-    private Bank currentUser;
+    private ArrayList<BankInformation> UserInformation = new ArrayList<>();
+    private BankInformation currentUser;
     Scanner input = new Scanner(System.in);
     Save s = new Save();
 
 
+
     public void simulate() {
-        LoadFiles();
+        if(UserInformation.isEmpty()){
+            loadFiles();
+        }
         String choice = "";
         System.out.println("Welcome to the International Bank");
         System.out.println("Would you like to create a bank account? Y/N (exit)");
@@ -21,8 +24,8 @@ public class Logic {
             System.exit(0);
         }
         if (choice.contains("y") || choice.contains("Y")) {
-            CreateAccount();
-            BankInteraction();
+            createAccount();
+            bankInteraction();
             s.Save(UserInformation);
         }
         else {
@@ -32,8 +35,8 @@ public class Logic {
                 System.exit(0);
             }
             if(i.contains("y") || i.contains("Y")){
-                LoginAccount();
-                BankInteraction();
+                loginAccount();
+                bankInteraction();
                 s.Save(UserInformation);
 
             }
@@ -46,8 +49,8 @@ public class Logic {
 
     }
 
-    private void LoadFiles(){
-        ArrayList<Bank> user = s.Load();
+    private void loadFiles(){
+        ArrayList<BankInformation> user = s.Load();
         try {
             for (int i = 0; i < user.size(); i++) {
                 UserInformation.add(user.get(i));
@@ -61,10 +64,11 @@ public class Logic {
 
     //This method allows the user to create an account, which would create a new bank object that stores
     //the
-    public void CreateAccount() {
+    public void createAccount() {
         //Asking for user credentials;
         boolean validName = false;
         String answer = "";
+        //Checks if the name entered exists
         while(!(validName)) {
             System.out.println("What is your name? (return)");
             answer = input.nextLine();
@@ -86,7 +90,6 @@ public class Logic {
         }
 
         int answer2 = 0;
-
         boolean validAge = false;
         while (!(validAge)) {
             try {
@@ -110,7 +113,7 @@ public class Logic {
         }
         else {
             boolean validBalance = false;
-            Person user = new Person(answer, answer2);
+            PersonInfo user = new PersonInfo(answer, answer2);
             double answer3 = 0.0;
             while (!validBalance) {
                 try {
@@ -148,7 +151,7 @@ public class Logic {
                             System.out.println("The pin you have entered does not contain the correct amount of digits");
                         } else {
                             try {
-                                Bank userBankAcc = new Bank(user, Integer.parseInt(pin), answer3);
+                                BankInformation userBankAcc = new BankInformation(user, Integer.parseInt(pin), answer3);
                                 System.out.println("Your pin number has been successfully created");
                                 UserInformation.add(userBankAcc);
                                 currentUser = UserInformation.get(UserInformation.size()-1);
@@ -166,7 +169,7 @@ public class Logic {
 
 
     // This method allows the user to login to an already existing account
-    public void LoginAccount() {
+    public void loginAccount() {
         System.out.println("Here are the current list of users: ");
         for (int i = 0; i < UserInformation.size(); i++) {
             System.out.println(UserInformation.get(i).getUser().getName());
@@ -175,8 +178,12 @@ public class Logic {
         boolean validUser = false;
 
         while (!(validUser)) {
-            System.out.println("What is your name?");
+            System.out.println("What is your name? (return)");
             String name = input.nextLine();
+            if(name.equals("return")) {
+                System.out.println("Returning to Main Menu");
+                simulate();
+            }
             for (int i = 0; i < UserInformation.size(); i++) {
                 if (UserInformation.get(i).getUser().getName().equals(name)) {
                     validUser = true;
@@ -200,8 +207,12 @@ public class Logic {
                     simulate();
 
                 } else {
-                    System.out.println("Please enter your 4 digit pin number, you have " + count + " attempts.");
+                    System.out.println("Please enter your 4 digit pin number, you have " + count + " attempts. (return)");
                     String pin = input.nextLine();
+                    if(pin.equals("return")) {
+                        System.out.println("Returning to Main Menu");
+                        simulate();
+                    }
                     if (pin.length() != 4) {
                         System.out.println("The pin you have entered does not contain the correct amount of digits.");
                     } else {
@@ -223,37 +234,80 @@ public class Logic {
         }
     }
 
-    public void BankInteraction(){
+    public void bankInteraction(){
         String userInput = "";
-
         while(!(userInput.equals("return"))){
             System.out.println();
-            System.out.println("Welcome to the International Bank, here is a list of current actions");
-
+            currentUser.listInfo();
+            System.out.println("Here is a list of current actions:");
+            commands();
+            userInput = input.nextLine();
+            Runner(userInput);
         }
     }
 
-    public void Runner(){
+    public void Runner(String choice){
+        if ((choice.contains("Deposit")) || (choice.contains("deposit"))){
+            depositBal();
+        }
+        else if((choice.contains("Withdraw")) || (choice.contains("withdraw"))){
+            withdrawBal();
+        }
+        else if((choice.contains("Name")) || (choice.contains("name"))){
+            changeName();
+        }
+        else if((choice.contains("Pin")) || (choice.contains("pin"))){
+            changePin();
+        }
+        else if ((choice.contains("Delete")) || (choice.contains("delete"))){
+            deleteAcc();
+        }
+        else{
+            System.out.println("That is not a valid command, please try again");
+        }
 
     }
 
-    public void Commands(){
-        
+    public void commands(){
+        System.out.println("Deposit");
+        System.out.println("Withdraw");
+        System.out.println("Change Name");
+        System.out.println("Change Pin");
+        System.out.println("Delete Account");
+        System.out.println("Return");
     }
 
-    public void Deposit(){
+    public void depositBal(){
+        boolean validDeposit = false;
+        double deposit = 0;
+        while(!(validDeposit)) {
+            System.out.print("Enter the amount of money you would like to deposit: ");
+            try {
+                String dep = input.nextLine();
+                deposit = Double.parseDouble(dep);
+                validDeposit = true;
+            } catch (Exception e) {
+                System.out.print("That is not a valid number, please try again");
+                System.out.println();
+            }
+        }
+        currentUser.deposit(deposit);
+        System.out.println("Money successfully deposited");
+    }
+
+    public void withdrawBal(){
 
     }
 
-    public void Withdraw(){
+    public void changeName(){
 
     }
 
-    public void ChangeName(){
+    public void changePin(){
 
     }
 
-    public void ChangePin(){
+    public void deleteAcc(){
 
     }
 
