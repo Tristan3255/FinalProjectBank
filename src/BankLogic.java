@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Scanner;
 public class BankLogic {
 
@@ -11,41 +12,32 @@ public class BankLogic {
     Save s = new Save();
 
 
-
     public void simulate() {
         if(UserInformation.isEmpty()){
             loadFiles();
         }
         String choice = "";
         System.out.println("Welcome to the International Bank");
-        System.out.println("Would you like to create a bank account? Y/N (exit)");
+        System.out.println("Would you like to (create) a bank account or (login)(exit)");
         choice = input.nextLine();
         if(choice.equals("exit")){
             System.exit(0);
         }
-        if (choice.contains("y") || choice.contains("Y")) {
+        if (choice.equalsIgnoreCase("create")){
             createAccount();
             bankInteraction();
             s.Save(UserInformation);
         }
-        else {
-            System.out.println("Would you like to log in? Y/N (exit)");
-            String i = input.nextLine();
-            if(i.equals("exit")){
-                System.exit(0);
-            }
-            if(i.contains("y") || i.contains("Y")){
+        else if (choice.equalsIgnoreCase("login")){
                 loginAccount();
                 bankInteraction();
                 s.Save(UserInformation);
 
-            }
-            else{
-                System.out.println("Returning back to the Main menu");
-                simulate();
-            }
         }
-
+        else{
+        System.out.println("Returning back to the Main menu");
+        simulate();
+        }
 
     }
 
@@ -239,6 +231,7 @@ public class BankLogic {
         while(!(userInput.equals("return"))){
             System.out.println();
             currentUser.listInfo();
+            System.out.println();
             System.out.println("Here is a list of current actions:");
             commands();
             userInput = input.nextLine();
@@ -247,19 +240,20 @@ public class BankLogic {
     }
 
     public void Runner(String choice){
-        if ((choice.contains("Deposit")) || (choice.contains("deposit"))){
+        choice.toLowerCase();
+        if (choice.contains("deposit")){
             depositBal();
         }
-        else if((choice.contains("Withdraw")) || (choice.contains("withdraw"))){
+        else if(choice.contains("withdraw")){
             withdrawBal();
         }
-        else if((choice.contains("Name")) || (choice.contains("name"))){
+        else if(choice.contains("name")){
             changeName();
         }
-        else if((choice.contains("Pin")) || (choice.contains("pin"))){
+        else if(choice.contains("pin")){
             changePin();
         }
-        else if ((choice.contains("Delete")) || (choice.contains("delete"))){
+        else if (choice.contains("delete")){
             deleteAcc();
         }
         else{
@@ -269,45 +263,151 @@ public class BankLogic {
     }
 
     public void commands(){
-        System.out.println("Deposit");
-        System.out.println("Withdraw");
-        System.out.println("Change Name");
-        System.out.println("Change Pin");
-        System.out.println("Delete Account");
-        System.out.println("Return");
+        System.out.println("-------------------");
+        System.out.println("-Deposit-");
+        System.out.println("-Withdraw-");
+        System.out.println("-Change (Name)-");
+        System.out.println("-Change (Pin)-");
+        System.out.println("-Delete Account-");
+        System.out.println("-Return-");
+        System.out.println("-------------------");
     }
 
     public void depositBal(){
         boolean validDeposit = false;
-        double deposit = 0;
+        double deposit;
         while(!(validDeposit)) {
-            System.out.print("Enter the amount of money you would like to deposit: ");
+            System.out.print("Enter the amount of money you would like to deposit (return) : ");
             try {
                 String dep = input.nextLine();
-                deposit = Double.parseDouble(dep);
+                if(dep.equals("return")){
+                    System.out.println("Returning back to the action Menu");
+                    bankInteraction();
+                }
+                else{
+                    deposit = Double.parseDouble(dep);
+                    currentUser.deposit(deposit);
+                    System.out.println("Money successfully deposited");
+                }
                 validDeposit = true;
             } catch (Exception e) {
                 System.out.print("That is not a valid number, please try again");
                 System.out.println();
             }
         }
-        currentUser.deposit(deposit);
-        System.out.println("Money successfully deposited");
+        s.Save(UserInformation);
     }
 
     public void withdrawBal(){
-
+        boolean validWithdraw = false;
+        double withdraw;
+        while(!(validWithdraw)) {
+            System.out.print("Enter the amount of money you would like to withdraw (return) : ");
+            try {
+                String wit = input.nextLine();
+                if(wit.equals("return")){
+                    System.out.println("Returning back to the action Menu");
+                    bankInteraction();
+                }
+                else{
+                    withdraw = Double.parseDouble(wit);
+                    if(withdraw > currentUser.getBalance()){
+                        System.out.println("You cannot withdraw money you do not have.");
+                    }
+                    else {
+                        currentUser.withdraw(withdraw);
+                        System.out.println("Money successfully withdrawn");
+                        validWithdraw = true;
+                    }
+                }
+            } catch (Exception e) {
+                System.out.print("That is not a valid number, please try again");
+                System.out.println();
+            }
+        }
+        s.Save(UserInformation);
     }
 
     public void changeName(){
-
+        System.out.println("What would you like to change your name to be?");
+        String name = input.nextLine();
+        if(name.equals("return")){
+            System.out.println("Returning to the Action Menu");
+        }
+        else{
+            currentUser.getUser().setName(name);
+            System.out.println("Name successfully changed");
+        }
     }
 
-    public void changePin(){
+    public void changePin() {
+        boolean validPin = false;
+        while (!(validPin)) {
+            System.out.println("What would you like to change your 4 digit pin number to? (return)");
+            String pin = input.nextLine();
+            if (pin.equals("return")) {
+                System.out.println("Returning to Main Menu");
+                bankInteraction();
+            }
+            if (pin.length() != 4) {
+                System.out.println("The new pin you have entered does not contain the correct amount of digits.");
+            } else {
+                try {
+                    int pinNum = Integer.parseInt(pin);
+                    boolean validConfirm = false;
+                    while(!(validConfirm)) {
+                        System.out.println("Re-enter your new pin for conformation (return)");
+                        String confirm = input.nextLine();
+                        if(confirm.equals("return")){
+                            bankInteraction();
+                        }
+                        int confirmPinNum = Integer.parseInt(confirm);
+                        if (pinNum == confirmPinNum) {
+                            currentUser.setPin(confirmPinNum);
+                            System.out.println("Your pin number has been successfully changed. Remember this number");
+                            validPin = true;
+                            validConfirm = true;
+                        } else {
+                            System.out.println("The pin you have entered does match the previous,please try again");
+                        }
+                    }
+                } catch (Exception e) {
+                    System.out.println("The pin you have entered contains other characters, please try again");
+                }
 
+            }
+        }
+        s.Save(UserInformation);
     }
 
     public void deleteAcc(){
+        System.out.println("Deleting an account would return the cash to the user and this account will be lost forever");
+        System.out.println("Are you sure you want to delete this account? Yes or No");
+        String answer = input.nextLine();
+        answer.toLowerCase();
+        if(answer.contains("yes")){
+            boolean correctPin = false;
+            while(!(correctPin)) {
+                System.out.println("To delete your account please enter your pin number (return) : ");
+                String pin = input.nextLine();
+                if(pin.length() != 4){
+                    System.out.println("The pin you have entered does not contain the correct amount of digits");
+                }
+                else{
+                    try{
+                        int pinNum = Integer.parseInt(pin);
+                    }
+                    catch(Exception e){
+
+                    }
+                }
+
+            }
+        }
+        else{
+            System.out.println("Returning back to the action Menu");
+            bankInteraction();
+        }
 
     }
 
