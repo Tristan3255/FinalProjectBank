@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.Scanner;
 public class BankLogic {
 
@@ -239,29 +238,6 @@ public class BankLogic {
         }
     }
 
-    public void Runner(String choice){
-        choice.toLowerCase();
-        if (choice.contains("deposit")){
-            depositBal();
-        }
-        else if(choice.contains("withdraw")){
-            withdrawBal();
-        }
-        else if(choice.contains("name")){
-            changeName();
-        }
-        else if(choice.contains("pin")){
-            changePin();
-        }
-        else if (choice.contains("delete")){
-            deleteAcc();
-        }
-        else{
-            System.out.println("That is not a valid command, please try again");
-        }
-
-    }
-
     public void commands(){
         System.out.println("-------------------");
         System.out.println("-Deposit-");
@@ -272,6 +248,34 @@ public class BankLogic {
         System.out.println("-Return-");
         System.out.println("-------------------");
     }
+
+    public void Runner(String choice){
+        String lChoice = choice.toLowerCase();
+        if (lChoice.contains("deposit")){
+            depositBal();
+        }
+        else if(lChoice.contains("withdraw")){
+            withdrawBal();
+        }
+        else if(lChoice.contains("name")){
+            changeName();
+        }
+        else if(lChoice.contains("pin")){
+            changePin();
+        }
+        else if (lChoice.contains("delete")){
+            deleteAcc();
+        }
+        else if(lChoice.contains("return")){
+            System.out.println("Returning to the Main Menu");
+            simulate();
+        }
+        else{
+            System.out.println("That is not a valid command, please try again");
+        }
+
+    }
+
 
     public void depositBal(){
         boolean validDeposit = false;
@@ -338,6 +342,7 @@ public class BankLogic {
             currentUser.getUser().setName(name);
             System.out.println("Name successfully changed");
         }
+        s.Save(UserInformation);
     }
 
     public void changePin() {
@@ -390,15 +395,36 @@ public class BankLogic {
             while(!(correctPin)) {
                 System.out.println("To delete your account please enter your pin number (return) : ");
                 String pin = input.nextLine();
+                if(pin.equals("return")){
+                    System.out.println("Returning to the action Menu");
+                    bankInteraction();
+                }
                 if(pin.length() != 4){
                     System.out.println("The pin you have entered does not contain the correct amount of digits");
                 }
                 else{
                     try{
                         int pinNum = Integer.parseInt(pin);
+                        if(pinNum == currentUser.getPin()){
+                            System.out.println("Account is being deleted");
+                            int index = 0;
+                            for(int i = 0; i < UserInformation.size(); i++){
+                                if(UserInformation.get(i).getUser().getName().equals(currentUser.getUser().getName())){
+                                    index = i;
+                                }
+                            }
+                            UserInformation.remove(index);
+                            s.Save(UserInformation);
+                            correctPin = true;
+                            simulate();
+                        }
+                        else{
+                            System.out.println("That is the incorrect pin number please try again");
+                        }
+
                     }
                     catch(Exception e){
-
+                        System.out.println("The pin you have entered contains other characters, please try again");
                     }
                 }
 
