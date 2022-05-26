@@ -12,7 +12,7 @@ public class Save{
     public void Save(ArrayList<BankInformation> BANKS){
             try {
                 // this method will create the file if it does not exist, if it does exist, it does nothing
-                FileWriter fw = new FileWriter("src/person.data");
+                FileWriter fw = new FileWriter("person.data");
                     for (int i = 0; i < BANKS.size(); i++) {
                         fw.write(BANKS.get(i).getUser().getName() + "|");
                         fw.write(BANKS.get(i).getUser().getAge() + "|");
@@ -32,7 +32,7 @@ public class Save{
     public ArrayList<BankInformation> Load() {
         try {
             ArrayList<BankInformation> Users = new ArrayList<BankInformation>();
-            File myFile = new File("src/person.data");
+            File myFile = new File("person.data");
             Scanner myReader = new Scanner(myFile);
             while (myReader.hasNextLine()) {
                 String data = myReader.nextLine();

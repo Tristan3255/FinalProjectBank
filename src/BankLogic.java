@@ -9,6 +9,7 @@ public class BankLogic {
     private BankInformation currentUser;
     Scanner input = new Scanner(System.in);
     Save s = new Save();
+    Clear c = new Clear();
 
 
     public void simulate() {
@@ -226,6 +227,7 @@ public class BankLogic {
     }
 
     public void bankInteraction(){
+        c.clearScreen();
         String userInput = "";
         while(!(userInput.equals("return"))){
             System.out.println();
