@@ -13,6 +13,13 @@ public class BankLogic {
 
 
     public void simulate() {
+        try{
+            Thread.sleep(700);
+            c.clearScreen();
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
         if(UserInformation.isEmpty()){
             loadFiles();
         }
@@ -26,13 +33,10 @@ public class BankLogic {
         if (choice.equalsIgnoreCase("create")){
             createAccount();
             bankInteraction();
-            s.Save(UserInformation);
         }
         else if (choice.equalsIgnoreCase("login")){
                 loginAccount();
                 bankInteraction();
-                s.Save(UserInformation);
-
         }
         else{
         System.out.println("Returning back to the Main menu");
@@ -85,25 +89,27 @@ public class BankLogic {
         boolean validAge = false;
         while (!(validAge)) {
             try {
-                System.out.println("What is your age? You must be above the age of 18 to apply for an account.(\"return\")");
+                System.out.println("What is your age? You must be above the age of 18 to apply for an account.(return)");
                 String s = input.nextLine();
                 if(s.equals("return")) {
                     System.out.println("Returning to Main Menu");
                     simulate();
                 }
                 else {
-                    answer2 = Integer.parseInt(s);
-                    validAge = true;
+                    if (validAge && answer2 < 18) {
+                        System.out.println("You are not old enough to apply for an account.");
+                    }
+                    else {
+                        answer2 = Integer.parseInt(s);
+                        validAge = true;
+                    }
                 }
             }
             catch (Exception e) {
                 System.out.println("That is not a valid age");
             }
         }
-        if (validAge && answer2 < 18) {
-            System.out.println("You are not old enough to apply for an account.");
-        }
-        else {
+
             boolean validBalance = false;
             PersonInfo user = new PersonInfo(answer, answer2);
             double answer3 = 0.0;
@@ -117,17 +123,19 @@ public class BankLogic {
                     }
                     else {
                         answer3 = Double.parseDouble(s);
-                        validBalance = true;
+                        if (answer3 < 100) {
+                            System.out.println("You have not met the required minimum amount of $100");
+                        }
+                        else{
+                            validBalance = true;
+                        }
                     }
 
                 } catch (Exception e) {
                     System.out.println("That is not a valid balance");
                 }
             }
-            if (answer3 < 100) {
-                System.out.println("You have not met the required minimum amount of $100");
-            }
-            else {
+
                 System.out.println("We would now like to ask you to create a 4 digit pin number for future access to you account");
                 System.out.println("Make sure to REMEMBER your pin number");
                 boolean validPin = false;
@@ -143,12 +151,18 @@ public class BankLogic {
                             System.out.println("The pin you have entered does not contain the correct amount of digits");
                         } else {
                             try {
-                                BankInformation userBankAcc = new BankInformation(user, Integer.parseInt(pin), answer3);
-                                System.out.println("Your pin number has been successfully created");
-                                UserInformation.add(userBankAcc);
-                                currentUser = UserInformation.get(UserInformation.size()-1);
-                                System.out.println("You have successfully created a new Bank Account!");
-                                validPin = true;
+                                if(Integer.parseInt(pin) < 0 || Integer.parseInt(pin) > 9999) {
+                                    System.out.println("The pin you have entered contains other characters, please try again.");
+                                }
+                                else{
+                                    BankInformation userBankAcc = new BankInformation(user, Integer.parseInt(pin), answer3);
+                                    System.out.println("Your pin number has been successfully created");
+                                    UserInformation.add(userBankAcc);
+                                    s.Save(UserInformation);
+                                    currentUser = UserInformation.get(UserInformation.size() - 1);
+                                    System.out.println("You have successfully created a new Bank Account!");
+                                    validPin = true;
+                                }
                             } catch (Exception e) {
                                 System.out.println("Your attempted pin number contains other characters, please try again.");
                             }
@@ -156,8 +170,8 @@ public class BankLogic {
                     }
                 }
             }
-        }
-    }
+
+
 
 
     // This method allows the user to login to an already existing account
@@ -209,13 +223,18 @@ public class BankLogic {
                         System.out.println("The pin you have entered does not contain the correct amount of digits.");
                     } else {
                         try {
-                            int pinNum = Integer.parseInt(pin);
-                            if (pinNum == currentUser.getPin()) {
-                                System.out.println("You have successfully logged in");
-                                correctPin = true;
-                            } else {
-                                System.out.println("That is an incorrect pin number");
-                                count--;
+                            if(Integer.parseInt(pin) < 0 || Integer.parseInt(pin) > 9999) {
+                                System.out.println("The pin you have entered contains other characters, please try again.");
+                            }
+                            else {
+                                int pinNum = Integer.parseInt(pin);
+                                if (pinNum == currentUser.getPin()) {
+                                    System.out.println("You have successfully logged in");
+                                    correctPin = true;
+                                } else {
+                                    System.out.println("That is an incorrect pin number");
+                                    count--;
+                                }
                             }
                         } catch (Exception e) {
                             System.out.println("The pin you have entered contains other characters, please try again");
@@ -227,9 +246,22 @@ public class BankLogic {
     }
 
     public void bankInteraction(){
-        c.clearScreen();
+        try{
+            Thread.sleep(700);
+            c.clearScreen();
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
         String userInput = "";
         while(!(userInput.equals("return"))){
+            try{
+                Thread.sleep(700);
+                c.clearScreen();
+            }
+            catch(Exception e){
+                e.printStackTrace();
+            }
             System.out.println();
             currentUser.listInfo();
             System.out.println();
