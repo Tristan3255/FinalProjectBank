@@ -18,6 +18,10 @@ public class BankInformation {
         return balance;
     }
 
+    public void setBalance(double bal){
+        balance = bal;
+    }
+
     public int getPin(){
         return pin;
     }

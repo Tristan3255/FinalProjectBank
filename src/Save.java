@@ -17,7 +17,7 @@ public class Save{
                         fw.write(BANKS.get(i).getUser().getName() + "|");
                         fw.write(BANKS.get(i).getUser().getAge() + "|");
                         fw.write(BANKS.get(i).getPin() + "|");
-                        fw.write(BANKS.get(i).getBalance() + "");
+                        fw.write(Math.round(BANKS.get(i).getBalance() * 100) / 100.0 + "");
                         fw.write("\n");
                     }
                 fw.close();

@@ -324,10 +324,15 @@ public class BankLogic {
                 }
                 else{
                     deposit = Double.parseDouble(dep);
-                    currentUser.deposit(deposit);
-                    System.out.println("Money successfully deposited");
+                    if(deposit > 9999999.99){
+                        System.out.println("The amount you have entered exceeds the amount you are allowed to deposit");
+                    }
+                    else{
+                        currentUser.deposit((Math.round(deposit * 100)) / 100.0);
+                        System.out.println("Money successfully deposited");
+                        validDeposit = true;
+                    }
                 }
-                validDeposit = true;
             } catch (Exception e) {
                 System.out.print("That is not a valid number, please try again");
                 System.out.println();
@@ -340,20 +345,27 @@ public class BankLogic {
         boolean validWithdraw = false;
         double withdraw;
         while(!(validWithdraw)) {
-            System.out.print("Enter the amount of money you would like to withdraw (return) : ");
+            System.out.print("Enter the amount of money you would like to withdraw (return) (all) : ");
             try {
                 String wit = input.nextLine();
                 if(wit.equals("return")){
                     System.out.println("Returning back to the action Menu");
                     bankInteraction();
                 }
+                if(wit.equals("all")){
+                    currentUser.setBalance(0.0);
+                    validWithdraw = true;
+                }
                 else{
                     withdraw = Double.parseDouble(wit);
                     if(withdraw > currentUser.getBalance()){
                         System.out.println("You cannot withdraw money you do not have.");
                     }
+                    if(withdraw  < 0.01){
+                        System.out.println("That is not a valid input");
+                    }
                     else {
-                        currentUser.withdraw(withdraw);
+                        currentUser.withdraw((Math.round(withdraw * 100)) / 100.0);
                         System.out.println("Money successfully withdrawn");
                         validWithdraw = true;
                     }
