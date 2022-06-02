@@ -20,7 +20,7 @@ public class BankLogic {
         catch(Exception e){
             e.printStackTrace();
         }
-        if(!(UserInformation.isEmpty())){
+        if(UserInformation.isEmpty()){
             loadFiles();
         }
         String choice = "";
