@@ -24,7 +24,7 @@ public class BankLogic {
             loadFiles();
         }
         String choice = "";
-        System.out.println("Welcome to the International Bank");
+        System.out.println("Welcome to Capital None");
         System.out.println("Would you like to (create) a bank account or (login)(exit)");
         choice = input.nextLine();
         if(choice.equals("exit")){
