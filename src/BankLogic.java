@@ -96,11 +96,11 @@ public class BankLogic {
                     simulate();
                 }
                 else {
-                    if (validAge && answer2 < 18) {
+                    answer2 = Integer.parseInt(s);
+                    if (answer2 < 18) {
                         System.out.println("You are not old enough to apply for an account.");
                     }
-                    else {
-                        answer2 = Integer.parseInt(s);
+                    else{
                         validAge = true;
                     }
                 }
